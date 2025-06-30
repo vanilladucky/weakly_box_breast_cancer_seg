@@ -198,10 +198,10 @@ if __name__ == '__main__':
     else:
         myMakedirs(args.exp_name, overwrite=False)"""
 
-    # save code
+    """# save code
     py_path_old = os.path.dirname(os.path.abspath(sys.argv[0]))
     py_path_new = os.path.join(args.exp_name, 'code')
-    shutil.copytree(py_path_old, py_path_new)
+    shutil.copytree(py_path_old, py_path_new)"""
 
     main()
 
