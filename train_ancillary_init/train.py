@@ -100,6 +100,7 @@ def main():
             projection_1 = torch.cat((fg_sample['projection_1'].cuda(), bg_sample['projection_1'].cuda()), dim=0)
             projection_2 = torch.cat((fg_sample['projection_2'].cuda(), bg_sample['projection_2'].cuda()), dim=0)
             cor_seg = torch.cat((fg_sample['cor_seg'].cuda(), bg_sample['cor_seg'].cuda()), dim=0)  # 1 - inside bbox, 0 - outside bbox
+            print(f"cor_seg shape: {cor_seg.shape}")
 
             fg_outs = net(fg_img, fg_seg_float)
             bg_outs = net(bg_img, bg_seg_float)
