@@ -92,7 +92,12 @@ class Projection(object):
         sample['projection_0'] = seg_proj_0
         sample['projection_1'] = seg_proj_1
         sample['projection_2'] = seg_proj_2
-
+        print("  >> cor_seg.sum() =", cor_seg.sum(), 
+            "  unique projections:", 
+            np.unique(sample['projection_0']), 
+            np.unique(sample['projection_1']), 
+            np.unique(sample['projection_2']))
+            
         return sample
 
 class CorrectSeg(object):
@@ -121,13 +126,6 @@ class CorrectSeg(object):
         sample['projection_1'] = seg_proj_1.astype('uint8')
         sample['projection_2'] = seg_proj_2.astype('uint8')
         sample['cor_seg'] = cor_seg
-
-        print("  >> cor_seg.sum() =", cor_seg.sum(), 
-        "  unique projections:", 
-        np.unique(sample['projection_0']), 
-        np.unique(sample['projection_1']), 
-        np.unique(sample['projection_2']))
-        
         return sample
 
 class ToTensor(object):
