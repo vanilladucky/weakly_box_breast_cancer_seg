@@ -45,7 +45,7 @@ def main():
 
     train_data_list = read_data_list('/root/autodl-tmp/Kim/kits23/dataset/original_train.txt')
     transform_fg_train = transforms.Compose([Norm(),
-                                             RandomCrop(args.patch_size, 1., 2),  # seed = 2 bbox
+                                             RandomCrop(args.patch_size, 1., 3),  # seed = 2 bbox
                                              Projection(),
                                              CorrectSeg(),
                                              ToTensor(0)])
