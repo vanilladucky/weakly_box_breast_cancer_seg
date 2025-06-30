@@ -21,14 +21,14 @@ class BreastTumor(Dataset):
         gt_data = nib.load(gt_npz).get_fdata()
         gt_data[gt_data==3] = 0 # In case of cyst
 
-        img = img_data['data']
+        """img = img_data['data']
         seg = seg_data['seg']
-        gt = gt_data['seg']
+        gt = gt_data['seg']"""
 
         sample = {'case': case,
-                  'image': img,
-                  'label': seg,
-                  'gt': gt}
+                  'image': img_data,
+                  'label': seg_data,
+                  'gt': gt_data}
         if self.transform:
             sample = self.transform(sample)
         return sample
