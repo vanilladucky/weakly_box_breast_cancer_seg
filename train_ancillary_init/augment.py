@@ -92,7 +92,7 @@ class Projection(object):
         sample['projection_0'] = seg_proj_0
         sample['projection_1'] = seg_proj_1
         sample['projection_2'] = seg_proj_2
-        print("  >> cor_seg.sum() =", cor_seg.sum(), 
+        print("  >> seg_data.sum() =", seg_data.sum(), 
             "  unique projections:", 
             np.unique(sample['projection_0']), 
             np.unique(sample['projection_1']), 
