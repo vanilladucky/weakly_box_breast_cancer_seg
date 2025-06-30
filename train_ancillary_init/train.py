@@ -35,14 +35,14 @@ def worker_init_fn(worker_id):
 
 def main():
     reproduce(args.seed)
-    logging.basicConfig(filename=os.path.join(args.exp_name, 'log.txt'), level=logging.INFO,
+    logging.basicConfig(filename=os.path.join(args.exp_name, 'breast_seg.txt'), level=logging.INFO,
                         format='[%(asctime)s.%(msecs)03d] %(message)s', datefmt='%H:%M:%S')
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
     logging.info(str(args))
 
-    net = Unet(1, 2).cuda()
+    net = Unet(1, args.num_classes).cuda()
 
-    train_data_list = read_data_list('/data/zym/workspace/bbox/train.txt')
+    train_data_list = read_data_list('/root/autodl-tmp/Kim/kits23/dataset/original_train.txt')
     transform_fg_train = transforms.Compose([Norm(),
                                              RandomCrop(args.patch_size, 1., 2),  # seed = 2 bbox
                                              Projection(),
@@ -73,7 +73,7 @@ def main():
 
     optimizer = optim.SGD(net.parameters(), lr=args.base_lr, momentum=0.99, weight_decay=1e-4, nesterov=True)
     writer = SummaryWriter(os.path.join(args.exp_name, 'tbx'))
-    CE = torch.nn.CrossEntropyLoss(ignore_index=2)
+    CE = torch.nn.CrossEntropyLoss(ignore_index=3)
     LogBarrier = LogBarrierLoss(t=5)
 
     iter_num = 0
@@ -162,10 +162,10 @@ def main():
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr_
 
-        # save
+        """# save
         if epoch_num % args.save_per_epoch == 0:
             save_model_path = os.path.join(args.exp_name, f'epoch_{epoch_num}.pth')
-            torch.save(net.state_dict(), save_model_path)
+            torch.save(net.state_dict(), save_model_path)"""
 
         # break
         if epoch_num == 20:
@@ -178,16 +178,16 @@ def main():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exp_name', type=str, default='/data/zym/experiment/bbox_tmi/ce_proj_box')
+    parser.add_argument('--exp_name', type=str, default='/root/autodl-tmp/Kim/SSL4MIS/logs/')
     # parser.add_argument('--exp_name', type=str, default='/data/zym/experiment/bbox_tmi/DEBUG')
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument('--max_epoch', type=int, default=200)
     parser.add_argument('--batch_size', type=int, default=2)
     parser.add_argument('--num_workers', type=int, default=4)
-    parser.add_argument('--patch_size', type=list, default=[96, 128, 128])
-    parser.add_argument('--base_lr', type=float, default=1e-4)
+    parser.add_argument('--patch_size', type=list, default=[96, 128, 128]) # D, W, H
+    parser.add_argument('--base_lr', type=float, default=0.0001)
     parser.add_argument('--gpu', type=str, default='2')
-    parser.add_argument('--num_classes', type=int, default=2)
+    parser.add_argument('--num_classes', type=int, default=3)
     parser.add_argument('--save_per_epoch', type=int, default=10)
     args = parser.parse_args()
 
