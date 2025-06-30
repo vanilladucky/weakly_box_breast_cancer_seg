@@ -34,6 +34,7 @@ def worker_init_fn(worker_id):
     np.random.seed(worker_seed)
 
 def main():
+    print("Starting")
     reproduce(args.seed)
     logging.basicConfig(filename=os.path.join(args.exp_name, 'breast_seg.txt'), level=logging.INFO,
                         format='[%(asctime)s.%(msecs)03d] %(message)s', datefmt='%H:%M:%S')
@@ -140,7 +141,7 @@ def main():
                 writer.add_scalar('loss/L_supervised', l_ce.item(), iter_num)
                 writer.add_scalar('loss/L_proj', l_proj.item(), iter_num)
 
-            if iter_num % 50 == 0:
+            """if iter_num % 50 == 0:
                 image = fg_img[0, 0:1, 30:71:10, :, :].permute(1, 0, 2, 3).repeat(1, 3, 1, 1)
                 grid_image = make_grid(image, 5, normalize=True)
                 writer.add_image('train/Image', grid_image, iter_num)
@@ -153,7 +154,7 @@ def main():
                 gt_batch = fg_gt.long()
                 image = gt_batch[0, 30:71:10, :, :].unsqueeze(0).permute(1, 0, 2, 3).repeat(1, 3, 1, 1)
                 grid_image = make_grid(image, 5, normalize=False)
-                writer.add_image('train/Groundtruth', grid_image, iter_num)
+                writer.add_image('train/Groundtruth', grid_image, iter_num)"""
 
             fg_sample = fg_prefetcher.next()
             bg_sample = bg_prefetcher.next()
@@ -173,8 +174,8 @@ def main():
 
     writer.close()
 
-    save_model_path = os.path.join(args.exp_name, f'epoch_{max_epoch}.pth')
-    torch.save(net.state_dict(), save_model_path)
+    #save_model_path = os.path.join(args.exp_name, f'epoch_{max_epoch}.pth')
+    #torch.save(net.state_dict(), save_model_path)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -192,10 +193,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
-    if args.exp_name == '/data/zym/experiment/bbox_tmi/DEBUG':
+    """if args.exp_name == '/data/zym/experiment/bbox_tmi/DEBUG':
         myMakedirs(args.exp_name, overwrite=True)
     else:
-        myMakedirs(args.exp_name, overwrite=False)
+        myMakedirs(args.exp_name, overwrite=False)"""
 
     # save code
     py_path_old = os.path.dirname(os.path.abspath(sys.argv[0]))
