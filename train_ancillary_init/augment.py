@@ -73,7 +73,7 @@ class Projection(object):
         return proj
 
     def __call__(self, sample):
-        seg_data = sample['label'].astype('uint8')
+        seg_data = (sample['label']==3).astype('uint8')
         seg_proj_0 = seg_data.sum((1, 2))
         seg_proj_1 = seg_data.sum((0, 2))
         seg_proj_2 = seg_data.sum((0, 1))
