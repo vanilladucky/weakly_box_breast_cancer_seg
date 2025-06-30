@@ -103,6 +103,7 @@ class Projection(object):
 class CorrectSeg(object):
     def __call__(self, sample):
         seg_proj_0, seg_proj_1, seg_proj_2 = sample['projection_0'], sample['projection_1'], sample['projection_2']
+        print(f"seg_prof unique: {np.unique(seg_proj_0)}, {np.unique(seg_proj_1)}, {np.unique(seg_proj_2)}")
         cor_seg = np.zeros_like(sample['label']).astype(np.uint8)
         cor_seg[seg_proj_0 == 1, :, :] += 1
         cor_seg[:, seg_proj_1 == 1, :] += 1
