@@ -116,10 +116,14 @@ def main():
                 optimizer.step()
                 optimizer.zero_grad()
                 writer.add_scalar('loss/L_supervised', l_ce.item(), iter_num)
+                logging.info(f"Epoch: {epoch_num} | Iter num: {iter_num} | Loss/L_supervised: {l_ce.item():.3f}")
             else:
-                outs_sm_fg = outs.softmax(1)[:, 1, ...]
+                print(f"Outs shape: {outs.shape}")
+                sm = outs.softmax(dim=1)
+                fg_prob = outs.softmax(1)[:, 1, ...] + outs.softmax(1)[:, 2, ...]
+                # outs_sm_fg = outs.softmax(1)[:, 1, ...]
 
-                bbox_outs_sm_fg = outs_sm_fg * cor_seg    # 1 - inside bbox, 0 - outside box
+                bbox_outs_sm_fg = fg_prob * cor_seg    # 1 - inside bbox, 0 - outside box
 
                 outs_sm_proj_0 = bbox_outs_sm_fg.sum((2, 3))
                 outs_sm_proj_1 = bbox_outs_sm_fg.sum((1, 3))
@@ -140,6 +144,7 @@ def main():
 
                 writer.add_scalar('loss/L_supervised', l_ce.item(), iter_num)
                 writer.add_scalar('loss/L_proj', l_proj.item(), iter_num)
+                logging.info(f"Epoch: {epoch_num} | Iter num: {iter_num} | Loss/L_supervised: {l_ce.item():3f} | Loss/L_proj: {l_proj.item():.3f}") 
 
             """if iter_num % 50 == 0:
                 image = fg_img[0, 0:1, 30:71:10, :, :].permute(1, 0, 2, 3).repeat(1, 3, 1, 1)
