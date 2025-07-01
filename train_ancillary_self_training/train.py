@@ -128,7 +128,7 @@ def main():
                 writer.add_scalar('loss/L_supervised', l_ce.item(), iter_num)
                 logging.info(f"Epoch: {epoch_num} | Iter num: {iter_num} | Loss/L_supervised: {l_ce.item():.3f}")
             else:
-                outs_sm_fg = outs.softmax(1)[:, 1, ...]
+                outs_sm_fg = outs.softmax(1)[:, 1, ...] + outs.softmax(1)[:, 2, ...] # Accounting for 1 - kidney and 2 - tumor
 
                 bbox_outs_sm_fg = outs_sm_fg * cor_seg    # 1 - inside bbox, 0 - outside box
 
@@ -146,11 +146,11 @@ def main():
                 for i in range(args.batch_size):
                     fg_outs_one = fg_outs[i:i+1]
                     fg_seg_one = fg_seg[i:i+1]
-                    seed_outs = fg_outs_one.softmax(1).permute(0, 2, 3, 4, 1).contiguous()[fg_seg_one == 2]  # after softmax
+                    seed_outs = fg_outs_one.softmax(1).permute(0, 2, 3, 4, 1).contiguous()[fg_seg_one == 1]  # after softmax
                     fg_seed_mask = seed_outs[:, 1] > 0.95
                     bg_seed_mask = seed_outs[:, 1] < 0.05
 
-                    seed_outs = fg_outs_one.permute(0, 2, 3, 4, 1).contiguous()[fg_seg_one == 2]  # before softmax
+                    seed_outs = fg_outs_one.permute(0, 2, 3, 4, 1).contiguous()[fg_seg_one == 1]  # before softmax
                     fg_seed_outs = seed_outs[fg_seed_mask]
                     bg_seed_outs = seed_outs[bg_seed_mask]
 
@@ -181,7 +181,7 @@ def main():
                 segs = torch.cat((fg_seg, bg_seg), dim=0)  # 2 - inside bbox, 0 - outside bbox
                 outs = torch.cat((fg_outs, bg_outs), dim=0)
 
-                outs_sm_fg = outs.softmax(1)[:, 1, ...]
+                outs_sm_fg = outs.softmax(1)[:, 1, ...] + outs.softmax(1)[:, 2, ...] # Accounting for 1 - kidney and 2 - tumor
 
                 bbox_outs_sm_fg = outs_sm_fg * cor_seg  # 1 - inside bbox, 0 - outside box
                 outs_sm_proj_0 = bbox_outs_sm_fg.sum((2, 3))
