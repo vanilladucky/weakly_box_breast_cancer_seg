@@ -80,7 +80,8 @@ def main():
 
     optimizer = optim.SGD(net.parameters(), lr=args.base_lr, momentum=0.99, weight_decay=1e-4, nesterov=True)
     writer = SummaryWriter(os.path.join(args.exp_name, 'tbx'))
-    CE = torch.nn.CrossEntropyLoss(ignore_index=3)
+    weights = torch.tensor([1,7,7], dtype=torch.float32).cuda() 
+    CE = torch.nn.CrossEntropyLoss(weight=weights, ignore_index=3)
     LogBarrier = LogBarrierLoss(t=5)
     REG = CRFLoss(alpha=15, beta=0.05, is_da=False, use_norm=False)
 
