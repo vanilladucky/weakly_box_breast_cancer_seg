@@ -36,17 +36,17 @@ def worker_init_fn(worker_id):
 
 def main():
     reproduce(args.seed)
-    logging.basicConfig(filename=os.path.join(args.exp_name, 'log.txt'), level=logging.INFO,
+    logging.basicConfig(filename=os.path.join(args.exp_name, 'breast_seg.txt'), level=logging.INFO,
                         format='[%(asctime)s.%(msecs)03d] %(message)s', datefmt='%H:%M:%S')
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
     logging.info(str(args))
 
-    net = Unet(1, 2).cuda()
+    net = Unet(1, args.num_classes).cuda()
     net.load_state_dict(torch.load(args.checkpoint))
 
-    train_data_list = read_data_list('/data/zym/workspace/bbox/train.txt')
+    train_data_list = read_data_list('/root/autodl-tmp/Kim/kits23/dataset/original_train.txt')
     transform_fg_train = transforms.Compose([Norm(),
-                                             RandomCrop(args.patch_size, 1., 2),  # seed = 2 bbox
+                                             RandomCrop(args.patch_size, 1., 3),  # seed = 2 bbox
                                              Projection(),
                                              CorrectSeg(),
                                              ToTensor(0)])
@@ -73,14 +73,14 @@ def main():
                                worker_init_fn=worker_init_fn,
                                drop_last=True)
 
-    eval_data_list = read_data_list('/data/zym/workspace/bbox/eval.txt')
+    eval_data_list = read_data_list('/root/autodl-tmp/Kim/kits23/dataset/original_val.txt')
     transform_eval = transforms.Compose([Norm()])
     eval_dataset = BreastTumorEval(eval_data_list, transform=transform_eval)
     eval_dataloader = DataLoader(eval_dataset, batch_size=1, shuffle=False)
 
     optimizer = optim.SGD(net.parameters(), lr=args.base_lr, momentum=0.99, weight_decay=1e-4, nesterov=True)
     writer = SummaryWriter(os.path.join(args.exp_name, 'tbx'))
-    CE = torch.nn.CrossEntropyLoss(ignore_index=2)
+    CE = torch.nn.CrossEntropyLoss(ignore_index=3)
     LogBarrier = LogBarrierLoss(t=5)
     REG = CRFLoss(alpha=15, beta=0.05, is_da=False, use_norm=False)
 
@@ -90,6 +90,7 @@ def main():
     iter_num = 0
     max_epoch = int(args.max_epoch)
     for epoch_num in tqdm(range(max_epoch), ncols=70):
+        loss_1, loss_2, loss_3, count = 0, 0, 0, 0
         epoch_num = epoch_num + 1
 
         fg_prefetcher = data_prefetcher(fg_dataloader)
@@ -126,6 +127,7 @@ def main():
                 optimizer.step()
                 optimizer.zero_grad()
                 writer.add_scalar('loss/L_supervised', l_ce.item(), iter_num)
+                logging.info(f"Epoch: {epoch_num} | Iter num: {iter_num} | Loss/L_supervised: {l_ce.item():.3f}")
             else:
                 outs_sm_fg = outs.softmax(1)[:, 1, ...]
 
@@ -204,8 +206,12 @@ def main():
                 writer.add_scalar('loss/L_supervised', l_ce.item(), iter_num)
                 writer.add_scalar('loss/L_proj', l_proj.item(), iter_num)
                 writer.add_scalar('loss/L_crf', l_crf.item(), iter_num)
+                loss_1+=l_ce.item()
+                loss_2+=l_proj.item()
+                loss_3+=l_crf.item()
+                count+=1
 
-            if iter_num % 50 == 0:
+            """if iter_num % 50 == 0:
                 image = fg_img[0, 0:1, 30:71:10, :, :].permute(1, 0, 2, 3).repeat(1, 3, 1, 1)
                 grid_image = make_grid(image, 5, normalize=True)
                 writer.add_image('train/Image', grid_image, iter_num)
@@ -218,19 +224,20 @@ def main():
                 gt_batch = fg_gt.long()
                 image = gt_batch[0, 30:71:10, :, :].unsqueeze(0).permute(1, 0, 2, 3).repeat(1, 3, 1, 1)
                 grid_image = make_grid(image, 5, normalize=False)
-                writer.add_image('train/Groundtruth', grid_image, iter_num)
+                writer.add_image('train/Groundtruth', grid_image, iter_num)"""
 
             fg_sample = fg_prefetcher.next()
             bg_sample = bg_prefetcher.next()
 
+        logging.info(f"\nEpoch: {epoch_num} | Loss/L_supervised: {loss_1/count:3f} | Loss/L_proj: {loss_2/count:.3f} | Loss/L_crf: {loss_3/count:.3f}") 
         lr_ = args.base_lr * (1 - epoch_num / max_epoch) ** 0.9
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr_
 
-        # save
+        """# save
         if epoch_num % args.save_per_epoch == 0:
             save_model_path = os.path.join(args.exp_name, f'epoch_{epoch_num}.pth')
-            torch.save(net.state_dict(), save_model_path)
+            torch.save(net.state_dict(), save_model_path)"""
 
         # eval
         if epoch_num % args.eval_per_epoch == 0:
@@ -246,7 +253,7 @@ def main():
                 writer.add_scalar('eval_best/recall', eval_recall, epoch_num)
                 save_model_path = os.path.join(args.exp_name, 'epoch_best.pth')
                 torch.save(net.state_dict(), save_model_path)
-
+            logging.info(f"\nEpoch: {epoch_num} | dice score: {eval_dice:.3f}")
     writer.close()
 
     save_model_path = os.path.join(args.exp_name, f'epoch_{max_epoch}.pth')
@@ -254,26 +261,26 @@ def main():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exp_name', type=str, default='/data/zym/experiment/bbox_tmi/ce_proj_pseudo_crf_box')
+    parser.add_argument('--exp_name', type=str, default='/root/autodl-tmp/Kim/weakly_box_breast_cancer_seg/train_ancillary_init')
     # parser.add_argument('--exp_name', type=str, default='/data/zym/experiment/bbox_tmi/DEBUG')
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument('--max_epoch', type=int, default=200)
-    parser.add_argument('--batch_size', type=int, default=2)
+    parser.add_argument('--batch_size', type=int, default=4)
     parser.add_argument('--num_workers', type=int, default=4)
     parser.add_argument('--patch_size', type=list, default=[96, 128, 128])
     parser.add_argument('--base_lr', type=float, default=1e-4)
-    parser.add_argument('--gpu', type=str, default='0')
+    parser.add_argument('--gpu', type=str, default='2')
     parser.add_argument('--volume_mn', type=float, default=0.10)
     parser.add_argument('--volume_mx', type=float, default=0.60)
     parser.add_argument('--ratio', type=float, default=0.05)
-    parser.add_argument('--checkpoint', type=str, default='/data/zym/experiment/bbox_tmi/ce_proj_box/epoch_20.pth')
-    parser.add_argument('--num_classes', type=int, default=2)
+    parser.add_argument('--checkpoint', type=str, default='/root/autodl-tmp/Kim/weakly_box_breast_cancer_seg/train_ancillary_init/epoch_20.pth')
+    parser.add_argument('--num_classes', type=int, default=3)
     parser.add_argument('--save_per_epoch', type=int, default=10)
     parser.add_argument('--eval_per_epoch', type=int, default=5)
     args = parser.parse_args()
 
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
-    if args.exp_name == '/data/zym/experiment/bbox_tmi/DEBUG':
+    """if args.exp_name == '/data/zym/experiment/bbox_tmi/DEBUG':
         myMakedirs(args.exp_name, overwrite=True)
     else:
         myMakedirs(args.exp_name, overwrite=False)
@@ -281,7 +288,7 @@ if __name__ == '__main__':
     # save code
     py_path_old = os.path.dirname(os.path.abspath(sys.argv[0]))
     py_path_new = os.path.join(args.exp_name, 'code')
-    shutil.copytree(py_path_old, py_path_new)
+    shutil.copytree(py_path_old, py_path_new)"""
 
     main()
 

@@ -81,13 +81,13 @@ class Projection(object):
         seg_proj_1[seg_proj_1 != 0] = 1
         seg_proj_2[seg_proj_2 != 0] = 1
 
-        seg_proj_0 = self.check(seg_proj_0).astype('uint8')
-        seg_proj_1 = self.check(seg_proj_1).astype('uint8')
-        seg_proj_2 = self.check(seg_proj_2).astype('uint8')
+        #seg_proj_0 = self.check(seg_proj_0).astype('uint8')
+        #seg_proj_1 = self.check(seg_proj_1).astype('uint8')
+        #seg_proj_2 = self.check(seg_proj_2).astype('uint8')
 
-        assert seg_proj_0[0] == 0 and seg_proj_0[-1] == 0
-        assert seg_proj_1[0] == 0 and seg_proj_1[-1] == 0
-        assert seg_proj_2[0] == 0 and seg_proj_2[-1] == 0
+        #assert seg_proj_0[0] == 0 and seg_proj_0[-1] == 0
+        #assert seg_proj_1[0] == 0 and seg_proj_1[-1] == 0
+        #assert seg_proj_2[0] == 0 and seg_proj_2[-1] == 0
 
         sample['projection_0'] = seg_proj_0
         sample['projection_1'] = seg_proj_1
@@ -113,9 +113,9 @@ class CorrectSeg(object):
         seg_proj_1[seg_proj_1 != 0] = 1
         seg_proj_2[seg_proj_2 != 0] = 1
 
-        assert seg_proj_0[0] == 0 and seg_proj_0[-1] == 0
-        assert seg_proj_1[0] == 0 and seg_proj_1[-1] == 0
-        assert seg_proj_2[0] == 0 and seg_proj_2[-1] == 0
+        #assert seg_proj_0[0] == 0 and seg_proj_0[-1] == 0
+        #assert seg_proj_1[0] == 0 and seg_proj_1[-1] == 0
+        #assert seg_proj_2[0] == 0 and seg_proj_2[-1] == 0
 
         sample['projection_0'] = seg_proj_0.astype('uint8')
         sample['projection_1'] = seg_proj_1.astype('uint8')
