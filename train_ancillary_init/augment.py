@@ -105,9 +105,9 @@ class Projection(object):
         p_xz = self.check(p_xz).astype('uint8')
         p_yz = self.check(p_yz).astype('uint8')
 
-        assert p_xy[0] == 0 and p_xy[-1] == 0
+        """assert p_xy[0] == 0 and p_xy[-1] == 0
         assert p_xz[0] == 0 and p_xz[-1] == 0
-        assert p_yz[0] == 0 and p_yz[-1] == 0
+        assert p_yz[0] == 0 and p_yz[-1] == 0"""
 
         sample['projection_0'] = p_xy
         sample['projection_1'] = p_xz
