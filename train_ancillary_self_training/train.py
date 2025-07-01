@@ -84,12 +84,10 @@ def main():
     LogBarrier = LogBarrierLoss(t=5)
     REG = CRFLoss(alpha=15, beta=0.05, is_da=False, use_norm=False)
 
-    best_eval_dice = 0
-    best_eval_jc = 0
-
     iter_num = 0
     max_epoch = int(args.max_epoch)
-    for epoch_num in tqdm(range(max_epoch), ncols=70):
+    for epoch_num in range(max_epoch):
+        print(f"\n=====Epoch: {epoch_num}====")
         loss_1, loss_2, loss_3, count = 0, 0, 0, 0
         epoch_num = epoch_num + 1
 
