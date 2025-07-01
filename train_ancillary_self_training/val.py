@@ -11,7 +11,7 @@ def validate(net, eval_dataloader,patch_size, num_classes, logging, writer, iter
     prec_kidney, prec_tumor = [], []
     rec_kidney, rec_tumor = [], []
 
-    for sampled_batch in tqdm(eval_dataloader):
+    for sampled_batch in (eval_dataloader):
         net.eval()
         c1, bbox, seg = sampled_batch['image'], sampled_batch['label'], sampled_batch['gt']
         c1 = c1.numpy()
