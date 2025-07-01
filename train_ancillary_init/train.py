@@ -136,7 +136,7 @@ def main():
                 #print(f"z1={z1.item()}, pen1={LogBarrier.penalty(z1).item()}")
                 #print(f"z2={z2.item()}, pen2={LogBarrier.penalty(z2).item()}")
                 l_ce = CE(outs, segs)
-                l_proj = 0.1 * torch.abs(LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2)) # Might need clamping to ensure no 'rewarding' for overshooting (can try torch.abs())
+                l_proj = 0.05 * (LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2)) # Might need clamping to ensure no 'rewarding' for overshooting (can try torch.abs())
 
                 loss = l_ce + l_proj
                 optimizer.zero_grad()
