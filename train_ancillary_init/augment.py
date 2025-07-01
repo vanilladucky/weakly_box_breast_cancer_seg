@@ -66,11 +66,28 @@ class Projection(object):
     def check(self, proj):
         # make sure bbox in the patch, if not, make invalid
         map, object_num = ndimage.label(proj, ndimage.generate_binary_structure(proj.ndim, 3))
-        if not map[0] == 0:
+        """if not map[0] == 0:
             proj[map == map[0]] = 0
         if not map[-1] == 0:
             proj[map == map[-1]] = 0
+        return proj"""
+        # 3) collect all labels touching any border
+        border_labels = set()
+        for axis in range(proj.ndim):
+            # take first slice along this axis
+            first = np.take(map,    0, axis=axis)
+            # take last slice along this axis
+            last  = np.take(map,   -1, axis=axis)
+            border_labels |= set(np.unique(first))
+            border_labels |= set(np.unique(last))
+
+        # 4) zero out any nonzero-map component that touched a border
+        for lbl in border_labels:
+            if lbl != 0:
+                proj[map == lbl] = 0
+
         return proj
+
 
     def __call__(self, sample):
         seg_data = (sample['label']==3).astype('uint8')
