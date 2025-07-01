@@ -100,14 +100,10 @@ class Projection(object):
         p_xy = (seg_data.sum(axis=0) != 0)   # shape (H, W)
         p_xz = (seg_data.sum(axis=1) != 0)   # shape (D, W)
         p_yz = (seg_data.sum(axis=2) != 0)   # shape (D, H)
-        # right after checking…
-        print("p_xy   unique:", np.unique(p_xy),   " sum:", p_xy.sum())
-        print("p_xz   unique:", np.unique(p_xz),   " sum:", p_xz.sum())
-        print("p_yz   unique:", np.unique(p_yz),   " sum:", p_yz.sum())
-
-        p_xy = self.check(p_xy).astype('uint8')
-        p_xz = self.check(p_xz).astype('uint8')
-        p_yz = self.check(p_yz).astype('uint8')
+    
+        #p_xy = self.check(p_xy).astype('uint8')
+        #p_xz = self.check(p_xz).astype('uint8')
+        #p_yz = self.check(p_yz).astype('uint8')
 
         """assert p_xy[0] == 0 and p_xy[-1] == 0
         assert p_xz[0] == 0 and p_xz[-1] == 0
@@ -151,6 +147,11 @@ class CorrectSeg(object):
         sample['projection_1'] = seg_proj_1.astype('uint8')
         sample['projection_2'] = seg_proj_2.astype('uint8')"""
         p_xy, p_xz, p_yz = sample['projection_0'], sample['projection_1'], sample['projection_2']
+        # right after checking…
+        print("p_xy   unique:", np.unique(p_xy),   " sum:", p_xy.sum())
+        print("p_xz   unique:", np.unique(p_xz),   " sum:", p_xz.sum())
+        print("p_yz   unique:", np.unique(p_yz),   " sum:", p_yz.sum())
+
         D, H, W = sample['label'].shape
 
         # back-project to full (D,H,W)
