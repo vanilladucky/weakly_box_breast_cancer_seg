@@ -241,10 +241,10 @@ def main():
 
         # eval
         if epoch_num % args.eval_per_epoch == 0:
-            writer, eval_dice, eval_jc, eval_precision, eval_recall = validate(net, eval_dataloader,
+            writer, (dice_kidney, dice_tumor), (jc_kidney, jc_tumor), (precision_kidney, precision_tumor), (recall_kidney, recall_tumor) = validate(net, eval_dataloader,
                                                                                args.patch_size, args.num_classes,
                                                                                logging, writer, iter_num, epoch_num)
-            if eval_dice > best_eval_dice and eval_jc > best_eval_jc:
+            """if eval_dice > best_eval_dice and eval_jc > best_eval_jc:
                 best_eval_dice = eval_dice
                 best_eval_jc = eval_jc
                 writer.add_scalar('eval_best/dice', eval_dice, epoch_num)
@@ -252,8 +252,8 @@ def main():
                 writer.add_scalar('eval_best/precision', eval_precision, epoch_num)
                 writer.add_scalar('eval_best/recall', eval_recall, epoch_num)
                 save_model_path = os.path.join(args.exp_name, 'epoch_best.pth')
-                torch.save(net.state_dict(), save_model_path)
-            logging.info(f"\nEpoch: {epoch_num} | dice score: {eval_dice:.3f}")
+                torch.save(net.state_dict(), save_model_path)"""
+            logging.info(f"\nEpoch: {epoch_num} | Kidney Dice score: {dice_kidney:.3f} | Tumor Dice score: {dice_tumor:.3f}")
     writer.close()
 
     save_model_path = os.path.join(args.exp_name, f'epoch_{max_epoch}.pth')
