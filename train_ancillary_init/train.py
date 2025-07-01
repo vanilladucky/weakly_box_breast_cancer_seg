@@ -133,7 +133,7 @@ def main():
                 z2 = projection_2.sum() - outs_sm_proj_2[projection_2 == 1].sum()
 
                 l_ce = CE(outs, segs)
-                l_proj = 0.01 * (LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2))
+                l_proj = 0.01 * (LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2)) # Might need clamping to ensure no 'rewarding' for overshooting
 
                 loss = l_ce + l_proj
                 optimizer.zero_grad()
@@ -166,7 +166,7 @@ def main():
             fg_sample = fg_prefetcher.next()
             bg_sample = bg_prefetcher.next()
 
-        logging.info(f"Epoch: {epoch_num} | Loss/L_supervised: {loss_1/count:3f} | Loss/L_proj: {loss_2/count:.3f}") 
+        logging.info(f"\nEpoch: {epoch_num} | Loss/L_supervised: {loss_1/count:3f} | Loss/L_proj: {loss_2/count:.3f}") 
         lr_ = args.base_lr * (1 - epoch_num / max_epoch) ** 0.9
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr_
@@ -178,6 +178,8 @@ def main():
 
         # break
         if epoch_num == 20:
+            save_model_path = os.path.join('/root/autodl-tmp/Kim/weakly_box_breast_cancer_seg/train_ancillary_init/', f'epoch_{epoch_num}.pth')
+            torch.save(net.state_dict(), save_model_path)
             break
 
     writer.close()
@@ -187,7 +189,7 @@ def main():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exp_name', type=str, default='/root/autodl-tmp/Kim/SSL4MIS/logs/')
+    parser.add_argument('--exp_name', type=str, default='/root/autodl-tmp/Kim/weakly_box_breast_cancer_seg/train_ancillary_init')
     # parser.add_argument('--exp_name', type=str, default='/data/zym/experiment/bbox_tmi/DEBUG')
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument('--max_epoch', type=int, default=200)
