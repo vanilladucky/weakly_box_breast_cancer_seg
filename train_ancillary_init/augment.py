@@ -147,11 +147,6 @@ class CorrectSeg(object):
         sample['projection_1'] = seg_proj_1.astype('uint8')
         sample['projection_2'] = seg_proj_2.astype('uint8')"""
         p_xy, p_xz, p_yz = sample['projection_0'], sample['projection_1'], sample['projection_2']
-        # right after checking…
-        print("p_xy   unique:", np.unique(p_xy),   " sum:", p_xy.sum())
-        print("p_xz   unique:", np.unique(p_xz),   " sum:", p_xz.sum())
-        print("p_yz   unique:", np.unique(p_yz),   " sum:", p_yz.sum())
-
         D, H, W = sample['label'].shape
 
         # back-project to full (D,H,W)
@@ -162,7 +157,6 @@ class CorrectSeg(object):
         # voxel‐wise intersection
         cor_seg = (p_xy3 & p_xz3 & p_yz3).astype(np.uint8)
         sample['cor_seg'] = cor_seg
-        print(f"cor_seg unique: {np.unique(cor_seg)}")
         return sample
 
 class ToTensor(object):
