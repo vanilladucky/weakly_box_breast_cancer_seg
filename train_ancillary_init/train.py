@@ -132,9 +132,9 @@ def main():
                 z0 = projection_0.sum() - outs_sm_proj_0[projection_0 == 1].sum()
                 z1 = projection_1.sum() - outs_sm_proj_1[projection_1 == 1].sum()
                 z2 = projection_2.sum() - outs_sm_proj_2[projection_2 == 1].sum()
-                print(f"z0={z0.item()}, pen0={LogBarrier.penalty(z0).item()}")
-                print(f"z1={z1.item()}, pen1={LogBarrier.penalty(z1).item()}")
-                print(f"z2={z2.item()}, pen2={LogBarrier.penalty(z2).item()}")
+                #print(f"z0={z0.item()}, pen0={LogBarrier.penalty(z0).item()}")
+                #print(f"z1={z1.item()}, pen1={LogBarrier.penalty(z1).item()}")
+                #print(f"z2={z2.item()}, pen2={LogBarrier.penalty(z2).item()}")
                 l_ce = CE(outs, segs)
                 l_proj = 0.1 * (LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2)) # Might need clamping to ensure no 'rewarding' for overshooting
 
