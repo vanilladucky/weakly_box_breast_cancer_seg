@@ -65,71 +65,45 @@ class Projection(object):
 
     def check(self, proj):
         # make sure bbox in the patch, if not, make invalid
-        map, object_num = ndimage.label(proj, ndimage.generate_binary_structure(proj.ndim, 3))
-        """if not map[0] == 0:
+        map, object_num = ndimage.label(proj, ndimage.generate_binary_structure(1, 3))
+        if not map[0] == 0:
             proj[map == map[0]] = 0
         if not map[-1] == 0:
             proj[map == map[-1]] = 0
-        return proj"""
-        # 3) collect all labels touching any border
-        border_labels = set()
-        for axis in range(proj.ndim):
-            # take first slice along this axis
-            first = np.take(map,    0, axis=axis)
-            # take last slice along this axis
-            last  = np.take(map,   -1, axis=axis)
-            border_labels |= set(np.unique(first))
-            border_labels |= set(np.unique(last))
-
-        # 4) zero out any nonzero-map component that touched a border
-        for lbl in border_labels:
-            if lbl != 0:
-                proj[map == lbl] = 0
-
         return proj
 
-
     def __call__(self, sample):
-        seg_data = (sample['label']==3).astype('uint8')
-        """seg_proj_0 = seg_data.sum((1, 2))
+        seg_data = sample['label'].astype('uint8')
+        seg_proj_0 = seg_data.sum((1, 2))
         seg_proj_1 = seg_data.sum((0, 2))
         seg_proj_2 = seg_data.sum((0, 1))
         seg_proj_0[seg_proj_0 != 0] = 1
         seg_proj_1[seg_proj_1 != 0] = 1
-        seg_proj_2[seg_proj_2 != 0] = 1"""
-        p_xy = (seg_data.sum(axis=0) != 0)   # shape (H, W)
-        p_xz = (seg_data.sum(axis=1) != 0)   # shape (D, W)
-        p_yz = (seg_data.sum(axis=2) != 0)   # shape (D, H)
-    
-        #p_xy = self.check(p_xy).astype('uint8')
-        #p_xz = self.check(p_xz).astype('uint8')
-        #p_yz = self.check(p_yz).astype('uint8')
+        seg_proj_2[seg_proj_2 != 0] = 1
 
-        """assert p_xy[0] == 0 and p_xy[-1] == 0
-        assert p_xz[0] == 0 and p_xz[-1] == 0
-        assert p_yz[0] == 0 and p_yz[-1] == 0"""
+        #seg_proj_0 = self.check(seg_proj_0).astype('uint8')
+        #seg_proj_1 = self.check(seg_proj_1).astype('uint8')
+        #seg_proj_2 = self.check(seg_proj_2).astype('uint8')
 
-        sample['projection_0'] = p_xy
-        sample['projection_1'] = p_xz
-        sample['projection_2'] = p_yz
-        """print("  >> seg_data.sum() =", seg_data.sum(), 
-            "  unique projections:", 
-            np.unique(sample['projection_0']), 
-            np.unique(sample['projection_1']), 
-            np.unique(sample['projection_2']))"""
-            
+        assert seg_proj_0[0] == 0 and seg_proj_0[-1] == 0
+        assert seg_proj_1[0] == 0 and seg_proj_1[-1] == 0
+        assert seg_proj_2[0] == 0 and seg_proj_2[-1] == 0
+
+        sample['projection_0'] = seg_proj_0
+        sample['projection_1'] = seg_proj_1
+        sample['projection_2'] = seg_proj_2
+
         return sample
 
 class CorrectSeg(object):
     def __call__(self, sample):
-        """seg_proj_0, seg_proj_1, seg_proj_2 = sample['projection_0'], sample['projection_1'], sample['projection_2']
+        seg_proj_0, seg_proj_1, seg_proj_2 = sample['projection_0'], sample['projection_1'], sample['projection_2']
         cor_seg = np.zeros_like(sample['label']).astype(np.uint8)
         cor_seg[seg_proj_0 == 1, :, :] += 1
         cor_seg[:, seg_proj_1 == 1, :] += 1
         cor_seg[:, :, seg_proj_2 == 1] += 1
         cor_seg[cor_seg != 3] = 0
         cor_seg[cor_seg == 3] = 1
-        print(f"cor_seg unique: {np.unique(cor_seg)}")
 
         # new projection
         seg_proj_0 = cor_seg.sum((1, 2))
@@ -145,17 +119,7 @@ class CorrectSeg(object):
 
         sample['projection_0'] = seg_proj_0.astype('uint8')
         sample['projection_1'] = seg_proj_1.astype('uint8')
-        sample['projection_2'] = seg_proj_2.astype('uint8')"""
-        p_xy, p_xz, p_yz = sample['projection_0'], sample['projection_1'], sample['projection_2']
-        D, H, W = sample['label'].shape
-
-        # back-project to full (D,H,W)
-        p_xy3 = np.repeat(p_xy[np.newaxis,:,:], D, axis=0)
-        p_xz3 = np.repeat(p_xz[:,np.newaxis,:], H, axis=1)
-        p_yz3 = np.repeat(p_yz[:,:,np.newaxis], W, axis=2)
-
-        # voxel‐wise intersection
-        cor_seg = (p_xy3 & p_xz3 & p_yz3).astype(np.uint8)
+        sample['projection_2'] = seg_proj_2.astype('uint8')
         sample['cor_seg'] = cor_seg
         return sample
 
