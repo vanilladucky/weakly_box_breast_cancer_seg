@@ -260,7 +260,7 @@ def main():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exp_name', type=str, default='/root/autodl-tmp/Kim/weakly_box_breast_cancer_seg/train_ancillary_init')
+    parser.add_argument('--exp_name', type=str, default='/root/autodl-tmp/Kim/weakly_box_breast_cancer_seg/train_ancillary_self_training')
     # parser.add_argument('--exp_name', type=str, default='/data/zym/experiment/bbox_tmi/DEBUG')
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument('--max_epoch', type=int, default=200)
