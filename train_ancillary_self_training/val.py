@@ -83,7 +83,17 @@ def validate(net, eval_dataloader,patch_size, num_classes, logging, writer, iter
         if add_pad:
             score_map = score_map[:, wl_pad:wl_pad + w, hl_pad:hl_pad + h, dl_pad:dl_pad + d]
         label_map = np.argmax(score_map, axis=0)
+        # Get value counts for model output
+        unique, counts = np.unique(label_map, return_counts=True)
+        value_counts = dict(zip(unique, counts))
+        print(f"Value count for validation model output: {value_counts}")
 
+        # Get value counts for ground truth
+        unique, counts = np.unique(seg, return_counts=True)
+        value_counts = dict(zip(unique, counts))
+        print(f"Value count for validation ground truth: {value_counts}")
+
+        # Calculating metrics
         for cls, dice_list, jc_list, p_list, r_list in [
             (1, dice_kidney, jc_kidney, prec_kidney, rec_kidney),
             (2, dice_tumor,  jc_tumor,  prec_tumor,  rec_tumor)
