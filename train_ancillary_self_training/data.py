@@ -29,7 +29,7 @@ class BreastTumor(Dataset):
             sample = self.transform(sample)
         return sample
 
-class BreastTumor(Dataset):
+class BreastTumorEval(Dataset):
     def __init__(self, info_list, transform=None):
         self.info_list = info_list
         self.transform = transform
