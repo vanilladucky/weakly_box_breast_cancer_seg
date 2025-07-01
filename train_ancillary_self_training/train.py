@@ -193,7 +193,7 @@ def main():
 
                 l_crf = 0.001 / np.prod(args.patch_size) * REG(fg_img, fg_outs)
                 l_ce = CE(outs, segs)
-                l_proj = 0.1 * torch.abs(LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2))
+                l_proj = 0.01 * torch.abs(LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2))
 
                 loss = l_ce + l_proj + l_crf
                 optimizer.zero_grad()
