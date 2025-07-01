@@ -80,6 +80,7 @@ def main():
     iter_num = 0
     max_epoch = int(args.max_epoch)
     for epoch_num in tqdm(range(max_epoch), ncols=70):
+        loss_1, loss_2, count = 0, 0, 0
         epoch_num = epoch_num + 1
 
         fg_prefetcher = data_prefetcher(fg_dataloader)
@@ -118,7 +119,6 @@ def main():
                 writer.add_scalar('loss/L_supervised', l_ce.item(), iter_num)
                 logging.info(f"Epoch: {epoch_num} | Iter num: {iter_num} | Loss/L_supervised: {l_ce.item():.3f}")
             else:
-                print(f"Outs shape: {outs.shape}")
                 sm = outs.softmax(dim=1)
                 fg_prob = outs.softmax(1)[:, 1, ...] + outs.softmax(1)[:, 2, ...]
                 # outs_sm_fg = outs.softmax(1)[:, 1, ...]
@@ -144,7 +144,9 @@ def main():
 
                 writer.add_scalar('loss/L_supervised', l_ce.item(), iter_num)
                 writer.add_scalar('loss/L_proj', l_proj.item(), iter_num)
-                logging.info(f"Epoch: {epoch_num} | Iter num: {iter_num} | Loss/L_supervised: {l_ce.item():3f} | Loss/L_proj: {l_proj.item():.3f}") 
+                loss_1+=l_ce.item()
+                loss_2+=l_proj.item()
+                count+=1
 
             """if iter_num % 50 == 0:
                 image = fg_img[0, 0:1, 30:71:10, :, :].permute(1, 0, 2, 3).repeat(1, 3, 1, 1)
@@ -164,6 +166,7 @@ def main():
             fg_sample = fg_prefetcher.next()
             bg_sample = bg_prefetcher.next()
 
+        logging.info(f"Epoch: {epoch_num} | Loss/L_supervised: {loss_1/count:3f} | Loss/L_proj: {loss_2/count:.3f}") 
         lr_ = args.base_lr * (1 - epoch_num / max_epoch) ** 0.9
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr_
