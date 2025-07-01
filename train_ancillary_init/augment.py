@@ -65,7 +65,7 @@ class Projection(object):
 
     def check(self, proj):
         # make sure bbox in the patch, if not, make invalid
-        map, object_num = ndimage.label(proj, ndimage.generate_binary_structure(1, 3))
+        map, object_num = ndimage.label(proj, ndimage.generate_binary_structure(proj.ndim, 3))
         if not map[0] == 0:
             proj[map == map[0]] = 0
         if not map[-1] == 0:
