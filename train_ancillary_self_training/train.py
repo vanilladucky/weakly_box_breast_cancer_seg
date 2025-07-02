@@ -140,7 +140,7 @@ def main():
                 z2 = projection_2.sum() - outs_sm_proj_2[projection_2 == 1].sum()
 
                 l_ce = CE(outs, segs)
-                l_proj = 0.01 * torch.abs(LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2))
+                l_proj = 0.01 * (LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2))
                 # pseudo label
                 l_pseudo = 0.
                 for i in range(args.batch_size):
@@ -193,7 +193,7 @@ def main():
 
                 l_crf = 0.001 / np.prod(args.patch_size) * REG(fg_img, fg_outs)
                 l_ce = CE(outs, segs)
-                l_proj = 0.01 * torch.abs(LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2))
+                l_proj = 0.01 * (LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2))
 
                 loss = l_ce + l_proj + l_crf
                 optimizer.zero_grad()
