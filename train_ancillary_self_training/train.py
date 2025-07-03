@@ -140,17 +140,18 @@ def main():
                 z2 = projection_2.sum() - outs_sm_proj_2[projection_2 == 1].sum()
 
                 l_ce = CE(outs, segs)
-                l_proj = 0.001 * (LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2))
+                l_proj = 0.0001 * (LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2))
                 # pseudo label
                 l_pseudo = 0.
                 for i in range(args.batch_size):
                     fg_outs_one = fg_outs[i:i+1]
                     fg_seg_one = fg_seg[i:i+1]
-                    seed_outs = fg_outs_one.softmax(1).permute(0, 2, 3, 4, 1).contiguous()[fg_seg_one == 1]  # after softmax
+                    mask = fg_seg_one != 0
+                    seed_outs = fg_outs_one.softmax(1).permute(0, 2, 3, 4, 1).contiguous()[mask]  # after softmax
                     fg_seed_mask = seed_outs[:, 1] > 0.95
                     bg_seed_mask = seed_outs[:, 1] < 0.05
 
-                    seed_outs = fg_outs_one.permute(0, 2, 3, 4, 1).contiguous()[fg_seg_one == 1]  # before softmax
+                    seed_outs = fg_outs_one.permute(0, 2, 3, 4, 1).contiguous()[mask]  # before softmax
                     fg_seed_outs = seed_outs[fg_seed_mask]
                     bg_seed_outs = seed_outs[bg_seed_mask]
 
@@ -170,7 +171,7 @@ def main():
                 loss = l_ce + l_proj + l_pseudo
                 optimizer.zero_grad()
                 loss.backward()
-                torch.nn.utils.clip_grad_value_(list(net.parameters()), clip_value=1.0)
+                # torch.nn.utils.clip_grad_value_(list(net.parameters()), clip_value=1.0)
                 optimizer.step()
                 optimizer.zero_grad()
 
@@ -191,14 +192,14 @@ def main():
                 z1 = projection_1.sum() - outs_sm_proj_1[projection_1 == 1].sum()
                 z2 = projection_2.sum() - outs_sm_proj_2[projection_2 == 1].sum()
 
-                l_crf = 0.001 / np.prod(args.patch_size) * REG(fg_img, fg_outs)
+                l_crf = 0.0001 / np.prod(args.patch_size) * REG(fg_img, fg_outs)
                 l_ce = CE(outs, segs)
                 l_proj = 0.001 * (LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2))
 
                 loss = l_ce + l_proj + l_crf
                 optimizer.zero_grad()
                 loss.backward()
-                torch.nn.utils.clip_grad_value_(list(net.parameters()), clip_value=1.0)
+                # torch.nn.utils.clip_grad_value_(list(net.parameters()), clip_value=1.0)
                 optimizer.step()
                 optimizer.zero_grad()
 
@@ -267,11 +268,11 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=4)
     parser.add_argument('--num_workers', type=int, default=4)
     parser.add_argument('--patch_size', type=list, default=[96, 128, 128])
-    parser.add_argument('--base_lr', type=float, default=1e-4)
-    parser.add_argument('--gpu', type=str, default='2')
+    parser.add_argument('--base_lr', type=float, default=5e-4)
+    parser.add_argument('--gpu', type=str, default='0')
     parser.add_argument('--volume_mn', type=float, default=0.10)
     parser.add_argument('--volume_mx', type=float, default=0.60)
-    parser.add_argument('--ratio', type=float, default=0.05)
+    parser.add_argument('--ratio', type=float, default=0.5)
     parser.add_argument('--checkpoint', type=str, default='/root/autodl-tmp/Kim/weakly_box_breast_cancer_seg/train_ancillary_init/epoch_20.pth')
     parser.add_argument('--num_classes', type=int, default=3)
     parser.add_argument('--save_per_epoch', type=int, default=10)
