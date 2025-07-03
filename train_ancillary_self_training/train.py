@@ -140,7 +140,7 @@ def main():
                 z2 = projection_2.sum() - outs_sm_proj_2[projection_2 == 1].sum()
 
                 l_ce = CE(outs, segs)
-                l_proj = 0.01 * (LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2))
+                l_proj = 0.001 * (LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2))
                 # pseudo label
                 l_pseudo = 0.
                 for i in range(args.batch_size):
@@ -193,7 +193,7 @@ def main():
 
                 l_crf = 0.001 / np.prod(args.patch_size) * REG(fg_img, fg_outs)
                 l_ce = CE(outs, segs)
-                l_proj = 0.01 * (LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2))
+                l_proj = 0.001 * (LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2))
 
                 loss = l_ce + l_proj + l_crf
                 optimizer.zero_grad()
@@ -229,7 +229,7 @@ def main():
             bg_sample = bg_prefetcher.next()
 
         logging.info(f"\nEpoch: {epoch_num} | Loss/L_supervised: {loss_1/count:3f} | Loss/L_proj: {loss_2/count:.3f} | Loss/L_crf: {loss_3/count:.3f}") 
-        lr_ = args.base_lr * (1 - epoch_num / max_epoch) ** 0.9
+        lr_ = args.base_lr * (1 - epoch_num / max_epoch) ** 0.95
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr_
 
