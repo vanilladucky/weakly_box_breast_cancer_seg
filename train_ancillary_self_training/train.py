@@ -140,13 +140,13 @@ def main():
                 z2 = projection_2.sum() - outs_sm_proj_2[projection_2 == 1].sum()
 
                 l_ce = CE(outs, segs)
-                l_proj = 0.0001 * (LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2))
+                l_proj = 0.01 * (LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2))
                 # pseudo label
                 l_pseudo = 0.
                 for i in range(args.batch_size):
                     fg_outs_one = fg_outs[i:i+1]
                     fg_seg_one = fg_seg[i:i+1]
-                    mask = fg_seg_one != 0
+                    mask = fg_seg_one != 0 # For kidney = 1 and tumor = 2
                     seed_outs = fg_outs_one.softmax(1).permute(0, 2, 3, 4, 1).contiguous()[mask]  # after softmax
                     fg_seed_mask = seed_outs[:, 1] > 0.95
                     bg_seed_mask = seed_outs[:, 1] < 0.05
@@ -194,7 +194,7 @@ def main():
 
                 l_crf = 0.0001 / np.prod(args.patch_size) * REG(fg_img, fg_outs)
                 l_ce = CE(outs, segs)
-                l_proj = 0.001 * (LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2))
+                l_proj = 0.01 * (LogBarrier.penalty(z0) + LogBarrier.penalty(z1) + LogBarrier.penalty(z2))
 
                 loss = l_ce + l_proj + l_crf
                 optimizer.zero_grad()
