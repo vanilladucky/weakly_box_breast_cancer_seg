@@ -234,10 +234,10 @@ def main():
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr_
 
-        """# save
+        # save
         if epoch_num % args.save_per_epoch == 0:
             save_model_path = os.path.join(args.exp_name, f'epoch_{epoch_num}.pth')
-            torch.save(net.state_dict(), save_model_path)"""
+            torch.save(net.state_dict(), save_model_path)
 
         # eval
         if epoch_num % args.eval_per_epoch == 0:

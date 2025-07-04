@@ -41,14 +41,14 @@ def main():
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
     logging.info(str(args))
 
-    net = PrimaryNet(1, 2).cuda()
-    a_net = AncillaryNet(1, 2).cuda()
+    net = PrimaryNet(1, args.num_classes).cuda()
+    a_net = AncillaryNet(1, args.num_classes).cuda()
     a_net.load_state_dict(torch.load('/data/zym/experiment/bbox_tmi/ce_proj_pseudo_crf_box/epoch_200.pth'))
     a_net.eval()
 
     train_data_list = read_data_list('/data/zym/workspace/bbox/train.txt')
     transform_fg_train = transforms.Compose([Norm(),
-                                             RandomCrop(args.patch_size, 1., 2),  # seed = 2 bbox
+                                             RandomCrop(args.patch_size, 1., 3),  # seed = 2 bbox
                                              Projection(),
                                              CorrectSeg(),
                                              ToTensor(0)])
@@ -75,14 +75,15 @@ def main():
                                worker_init_fn=worker_init_fn,
                                drop_last=True)
 
-    eval_data_list = read_data_list('/data/zym/workspace/bbox/eval.txt')
+    eval_data_list = read_data_list('/root/autodl-tmp/Kim/kits23/dataset/original_val.txt')
     transform_eval = transforms.Compose([Norm()])
     eval_dataset = BreastTumorEval(eval_data_list, transform=transform_eval)
     eval_dataloader = DataLoader(eval_dataset, batch_size=1, shuffle=False)
 
     optimizer = optim.SGD(net.parameters(), lr=args.base_lr, momentum=0.99, weight_decay=1e-4, nesterov=True)
     writer = SummaryWriter(os.path.join(args.exp_name, 'tbx'))
-    CE = torch.nn.CrossEntropyLoss(ignore_index=2)
+    weights = torch.tensor([1,10,10], dtype=torch.float32).cuda() 
+    CE = torch.nn.CrossEntropyLoss(weight=weights, ignore_index=3)
     KL = torch.nn.KLDivLoss(reduction="none")
     LogBarrier = LogBarrierLoss(t=5)
     REG = CRFLoss(alpha=15, beta=0.05, is_da=False, use_norm=False)
@@ -195,7 +196,7 @@ def main():
                 writer.add_scalar('loss/L_proj', l_proj.item(), iter_num)
                 writer.add_scalar('loss/L_crf', l_crf.item(), iter_num)
 
-            if iter_num % 50 == 0:
+            """if iter_num % 50 == 0:
                 image = fg_img[0, 0:1, 30:71:10, :, :].permute(1, 0, 2, 3).repeat(1, 3, 1, 1)
                 grid_image = make_grid(image, 5, normalize=True)
                 writer.add_image('train/Image', grid_image, iter_num)
@@ -208,7 +209,7 @@ def main():
                 gt_batch = fg_gt.long()
                 image = gt_batch[0, 30:71:10, :, :].unsqueeze(0).permute(1, 0, 2, 3).repeat(1, 3, 1, 1)
                 grid_image = make_grid(image, 5, normalize=False)
-                writer.add_image('train/Groundtruth', grid_image, iter_num)
+                writer.add_image('train/Groundtruth', grid_image, iter_num)"""
 
             fg_sample = fg_prefetcher.next()
             bg_sample = bg_prefetcher.next()
@@ -244,19 +245,19 @@ def main():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exp_name', type=str, default='/data/zym/experiment/bbox_tmi/ce_proj_pseudo_crf_box_kl')
+    parser.add_argument('--exp_name', type=str, default='/root/autodl-tmp/Kim/weakly_box_breast_cancer_seg/train_primary')
     # parser.add_argument('--exp_name', type=str, default='/data/zym/experiment/bbox_tmi/DEBUG')
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument('--max_epoch', type=int, default=200)
     parser.add_argument('--batch_size', type=int, default=2)
     parser.add_argument('--num_workers', type=int, default=4)
-    parser.add_argument('--patch_size', type=list, default=[96, 128, 128])
-    parser.add_argument('--base_lr', type=float, default=1e-4)
+    parser.add_argument('--patch_size', type=list, default=[128, 96, 96])
+    parser.add_argument('--base_lr', type=float, default=5e-4)
     parser.add_argument('--gpu', type=str, default='0')
     parser.add_argument('--T', type=float, default=1)
     parser.add_argument('--volume_mn', type=float, default=0.10)
     parser.add_argument('--volume_mx', type=float, default=0.60)
-    parser.add_argument('--num_classes', type=int, default=2)
+    parser.add_argument('--num_classes', type=int, default=3)
     parser.add_argument('--save_per_epoch', type=int, default=10)
     parser.add_argument('--eval_per_epoch', type=int, default=5)
     args = parser.parse_args()
