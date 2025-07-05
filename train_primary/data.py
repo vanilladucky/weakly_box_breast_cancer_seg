@@ -16,18 +16,15 @@ class BreastTumor(Dataset):
         img_npz = f'/root/autodl-tmp/Kim/kits23/dataset/{case}/imaging.nii.gz' 
         gt_npz = f'/root/autodl-tmp/Kim/kits23/dataset/{case}/segmentation.nii.gz' 
         case = case.split('.')[0]
-        seg_data = nib.load(seg_npz)
-        img_data = nib.load(img_npz)
-        gt_data = nib.load(gt_npz)
-
-        img = img_data['data']
-        seg = seg_data['seg']
-        gt = gt_data['seg']
+        seg_data = nib.load(seg_npz).get_fdata()
+        img_data = nib.load(img_npz).get_fdata()
+        gt_data = nib.load(gt_npz).get_fdata()
+        gt_data[gt_data==3] = 0 # In case of cyst
 
         sample = {'case': case,
-                  'image': img,
-                  'label': seg,
-                  'gt': gt}
+                  'image': img_data,
+                  'label': seg_data,
+                  'gt': gt_data}
         if self.transform:
             sample = self.transform(sample)
         return sample
@@ -46,18 +43,15 @@ class BreastTumorEval(Dataset):
         img_npz = f'/root/autodl-tmp/Kim/kits23/dataset/{case}/imaging.nii.gz' 
         gt_npz = f'/root/autodl-tmp/Kim/kits23/dataset/{case}/segmentation.nii.gz' 
         case = case.split('.')[0]
-        img_data = nib.load(img_npz)
-        seg_data = nib.load(seg_npz)
-        gt_data = nib.load(gt_npz)
-
-        img = img_data['data']
-        seg = seg_data['seg']
-        gt = gt_data['seg']
+        seg_data = nib.load(seg_npz).get_fdata()
+        img_data = nib.load(img_npz).get_fdata()
+        gt_data = nib.load(gt_npz).get_fdata()
+        gt_data[gt_data==3] = 0 # In case of cyst
 
         sample = {'case': case,
-                  'image': img,
-                  'label': seg,
-                  'gt': gt}
+                  'image': img_data,
+                  'label': seg_data,
+                  'gt': gt_data}
         if self.transform:
             sample = self.transform(sample)
         return sample
