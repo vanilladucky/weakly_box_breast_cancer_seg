@@ -1,5 +1,6 @@
 from torch.utils.data import Dataset
 import numpy as np
+import nibabel as nib
 
 class BreastTumor(Dataset):
     def __init__(self, info_list, transform=None):
@@ -15,9 +16,9 @@ class BreastTumor(Dataset):
         img_npz = f'/root/autodl-tmp/Kim/kits23/dataset/{case}/imaging.nii.gz' 
         gt_npz = f'/root/autodl-tmp/Kim/kits23/dataset/{case}/segmentation.nii.gz' 
         case = case.split('.')[0]
-        seg_data = np.load(seg_npz)
-        img_data = np.load(img_npz)
-        gt_data = np.load(gt_npz)
+        seg_data = nib.load(seg_npz)
+        img_data = nib.load(img_npz)
+        gt_data = nib.load(gt_npz)
 
         img = img_data['data']
         seg = seg_data['seg']
@@ -45,9 +46,9 @@ class BreastTumorEval(Dataset):
         img_npz = f'/root/autodl-tmp/Kim/kits23/dataset/{case}/imaging.nii.gz' 
         gt_npz = f'/root/autodl-tmp/Kim/kits23/dataset/{case}/segmentation.nii.gz' 
         case = case.split('.')[0]
-        img_data = np.load(img_npz)
-        seg_data = np.load(seg_npz)
-        gt_data = np.load(gt_npz)
+        img_data = nib.load(img_npz)
+        seg_data = nib.load(seg_npz)
+        gt_data = nib.load(gt_npz)
 
         img = img_data['data']
         seg = seg_data['seg']
