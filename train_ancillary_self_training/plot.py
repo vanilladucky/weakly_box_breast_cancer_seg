@@ -2,6 +2,7 @@ import argparse
 import re
 import sys
 import matplotlib.pyplot as plt
+import numpy as np 
 
 def parse_log(logfile):
     """
@@ -38,6 +39,11 @@ def plot_scores(epochs, kidney, tumor, output):
     plt.ylabel('Dice Score')
     plt.grid(True, linestyle='--', alpha=0.5)
     plt.legend()
+
+    # ** set y-axis from 0 to 1 with 0.1 intervals **
+    plt.ylim(0, 1)
+    plt.yticks(np.arange(0, 1.01, 0.1))
+
     plt.tight_layout()
 
     if output:

@@ -6,10 +6,10 @@ import math
 from tqdm import tqdm
 
 def validate(net, eval_dataloader,patch_size, num_classes, logging, writer, iter_num, epoch_num):
-    all_case_dice = []
-    all_case_jc = []
-    all_case_precision = []
-    all_case_recall = []
+    dice_kidney, dice_tumor = [], []
+    jc_kidney, jc_tumor = [], []
+    prec_kidney, prec_tumor = [], []
+    rec_kidney, rec_tumor = [], []
 
     for sampled_batch in tqdm(eval_dataloader):
         net.eval()
@@ -78,22 +78,44 @@ def validate(net, eval_dataloader,patch_size, num_classes, logging, writer, iter
             score_map = score_map[:, wl_pad:wl_pad + w, hl_pad:hl_pad + h, dl_pad:dl_pad + d]
         label_map = np.argmax(score_map, axis=0)
 
-        dice = metric.binary.dc(label_map, seg)
-        jc = metric.binary.jc(label_map, seg)
-        precision = metric.binary.precision(label_map, seg)
-        recall = metric.binary.recall(label_map, seg)
-        all_case_dice.append(dice)
-        all_case_jc.append(jc)
-        all_case_precision.append(precision)
-        all_case_recall.append(recall)
+        # Get value counts for model output
+        unique, counts = np.unique(label_map, return_counts=True)
+        value_counts = dict(zip(unique, counts))
+        print(f"Value count for validation model output: {value_counts}")
 
-    mean_dice = np.array(all_case_dice).mean()
-    mean_jc = np.array(all_case_jc).mean()
-    mean_precision = np.array(all_case_precision).mean()
-    mean_recall = np.array(all_case_recall).mean()
-    logging.info('dice: {}; jc: {}; precision: {}; recall: {};'.format(mean_dice, mean_jc, mean_precision, mean_recall))
-    writer.add_scalar('eval/dice', mean_dice, epoch_num)
-    writer.add_scalar('eval/jc', mean_jc, epoch_num)
-    writer.add_scalar('eval/precision', mean_precision, epoch_num)
-    writer.add_scalar('eval/recall', mean_recall, epoch_num)
-    return writer, mean_dice, mean_jc, mean_precision, mean_recall
+        # Get value counts for ground truth
+        unique, counts = np.unique(seg, return_counts=True)
+        value_counts = dict(zip(unique, counts))
+        print(f"Value count for validation ground truth: {value_counts}")
+
+        # Calculating metrics
+        for cls, dice_list, jc_list, p_list, r_list in [
+            (1, dice_kidney, jc_kidney, prec_kidney, rec_kidney),
+            (2, dice_tumor,  jc_tumor,  prec_tumor,  rec_tumor)
+        ]:
+            pred_bin = (label_map == cls).astype(np.uint8)
+            gt_bin   = (seg      == cls).astype(np.uint8)
+            dice_list.append(    metric.binary.dc(pred_bin, gt_bin)    )
+            jc_list.append(      metric.binary.jc(pred_bin, gt_bin)    )
+            p_list.append(       metric.binary.precision(pred_bin, gt_bin) )
+            r_list.append(       metric.binary.recall(pred_bin, gt_bin)    )
+
+    mean_dk = np.mean(dice_kidney)
+    mean_dt = np.mean(dice_tumor)
+    mean_jk = np.mean(jc_kidney)
+    mean_jt = np.mean(jc_tumor)
+    mean_pk = np.mean(prec_kidney)
+    mean_pt = np.mean(prec_tumor)
+    mean_rk = np.mean(rec_kidney)
+    mean_rt = np.mean(rec_tumor)
+
+    # log separately
+    writer.add_scalar('eval/dice_kidney', mean_dk, epoch_num)
+    writer.add_scalar('eval/dice_tumor',  mean_dt, epoch_num)
+    writer.add_scalar('eval/jc_kidney',   mean_jk, epoch_num)
+    writer.add_scalar('eval/jc_tumor',    mean_jt, epoch_num)
+    writer.add_scalar('eval/prec_kidney', mean_pk, epoch_num)
+    writer.add_scalar('eval/prec_tumor',  mean_pt, epoch_num)
+    writer.add_scalar('eval/recall_kidney', mean_rk, epoch_num)
+    writer.add_scalar('eval/recall_tumor',  mean_rt, epoch_num)
+    return writer, (mean_dk, mean_dt), (mean_jk, mean_jt), (mean_pk, mean_pt), (mean_rk, mean_rt)

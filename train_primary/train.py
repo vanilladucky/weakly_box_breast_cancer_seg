@@ -43,10 +43,10 @@ def main():
 
     net = PrimaryNet(1, args.num_classes).cuda()
     a_net = AncillaryNet(1, args.num_classes).cuda()
-    a_net.load_state_dict(torch.load('/data/zym/experiment/bbox_tmi/ce_proj_pseudo_crf_box/epoch_200.pth'))
+    a_net.load_state_dict(torch.load('/root/autodl-tmp/Kim/weakly_box_breast_cancer_seg/train_ancillary_self_training/epoch_120.pth'))
     a_net.eval()
 
-    train_data_list = read_data_list('/data/zym/workspace/bbox/train.txt')
+    train_data_list = read_data_list('/root/autodl-tmp/Kim/kits23/dataset/original_train.txt')
     transform_fg_train = transforms.Compose([Norm(),
                                              RandomCrop(args.patch_size, 1., 3),  # seed = 2 bbox
                                              Projection(),
@@ -225,18 +225,15 @@ def main():
 
         # eval
         if epoch_num % args.eval_per_epoch == 0:
-            writer, eval_dice, eval_jc, eval_precision, eval_recall = validate(net, eval_dataloader,
+            writer, (dice_kidney, dice_tumor), (jc_kidney, jc_tumor), (precision_kidney, precision_tumor), (recall_kidney, recall_tumor) = validate(net, eval_dataloader,
                                                                                args.patch_size, args.num_classes,
                                                                                logging, writer, iter_num, epoch_num)
-            if eval_dice > best_eval_dice and eval_jc > best_eval_jc:
-                best_eval_dice = eval_dice
-                best_eval_jc = eval_jc
-                writer.add_scalar('eval_best/dice', eval_dice, epoch_num)
-                writer.add_scalar('eval_best/jc', eval_jc, epoch_num)
-                writer.add_scalar('eval_best/precision', eval_precision, epoch_num)
-                writer.add_scalar('eval_best/recall', eval_recall, epoch_num)
+            mean_dice = (dice_kidney+dice_tumor)/2
+            if mean_dice > best_eval_dice:
+                best_eval_dice = mean_dice
                 save_model_path = os.path.join(args.exp_name, 'epoch_best.pth')
                 torch.save(net.state_dict(), save_model_path)
+            logging.info(f"\nEpoch: {epoch_num} | Kidney Dice score: {dice_kidney:.3f} | Tumor Dice score: {dice_tumor:.3f}")
 
     writer.close()
 
@@ -259,11 +256,11 @@ if __name__ == '__main__':
     parser.add_argument('--volume_mx', type=float, default=0.60)
     parser.add_argument('--num_classes', type=int, default=3)
     parser.add_argument('--save_per_epoch', type=int, default=10)
-    parser.add_argument('--eval_per_epoch', type=int, default=5)
+    parser.add_argument('--eval_per_epoch', type=int, default=1)
     args = parser.parse_args()
 
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
-    if args.exp_name == '/data/zym/experiment/bbox_tmi/DEBUG':
+    """if args.exp_name == '/data/zym/experiment/bbox_tmi/DEBUG':
         myMakedirs(args.exp_name, overwrite=True)
     else:
         myMakedirs(args.exp_name, overwrite=False)
@@ -271,7 +268,7 @@ if __name__ == '__main__':
     # save code
     py_path_old = os.path.dirname(os.path.abspath(sys.argv[0]))
     py_path_new = os.path.join(args.exp_name, 'code')
-    shutil.copytree(py_path_old, py_path_new)
+    shutil.copytree(py_path_old, py_path_new)"""
 
     main()
 
