@@ -125,3 +125,90 @@ Epoch: 54 | Kidney Dice score: 0.773 | Tumor Dice score: 0.201
 Epoch: 55 | Kidney Dice score: 0.735 | Tumor Dice score: 0.225
 [18:01:16.656] 
 Epoch: 56 | Kidney Dice score: 0.787 | Tumor Dice score: 0.196
+[18:07:22.169] 
+Epoch: 57 | Kidney Dice score: 0.789 | Tumor Dice score: 0.252
+[18:13:02.067] 
+Epoch: 58 | Kidney Dice score: 0.754 | Tumor Dice score: 0.193
+[18:18:45.119] 
+Epoch: 59 | Kidney Dice score: 0.776 | Tumor Dice score: 0.224
+[18:24:21.586] 
+Epoch: 60 | Kidney Dice score: 0.794 | Tumor Dice score: 0.226
+[18:30:31.947] 
+Epoch: 61 | Kidney Dice score: 0.784 | Tumor Dice score: 0.256
+[18:36:28.761] 
+Epoch: 62 | Kidney Dice score: 0.776 | Tumor Dice score: 0.255
+[18:42:37.154] 
+Epoch: 63 | Kidney Dice score: 0.834 | Tumor Dice score: 0.245
+[18:48:25.259] 
+Epoch: 64 | Kidney Dice score: 0.820 | Tumor Dice score: 0.278
+[18:54:15.196] 
+Epoch: 65 | Kidney Dice score: 0.811 | Tumor Dice score: 0.221
+[18:59:53.858] 
+Epoch: 66 | Kidney Dice score: 0.804 | Tumor Dice score: 0.236
+[19:05:56.156] 
+Epoch: 67 | Kidney Dice score: 0.814 | Tumor Dice score: 0.272
+[19:11:39.747] 
+Epoch: 68 | Kidney Dice score: 0.803 | Tumor Dice score: 0.244
+[19:17:29.590] 
+Epoch: 69 | Kidney Dice score: 0.817 | Tumor Dice score: 0.309
+[19:23:22.060] 
+Epoch: 70 | Kidney Dice score: 0.830 | Tumor Dice score: 0.276
+[19:29:15.454] 
+Epoch: 71 | Kidney Dice score: 0.798 | Tumor Dice score: 0.246
+[19:35:12.180] 
+Epoch: 72 | Kidney Dice score: 0.829 | Tumor Dice score: 0.226
+[19:40:50.927] 
+Epoch: 73 | Kidney Dice score: 0.826 | Tumor Dice score: 0.229
+[19:46:38.568] 
+Epoch: 74 | Kidney Dice score: 0.812 | Tumor Dice score: 0.249
+[19:52:31.205] 
+Epoch: 75 | Kidney Dice score: 0.801 | Tumor Dice score: 0.212
+[19:58:32.975] 
+Epoch: 76 | Kidney Dice score: 0.820 | Tumor Dice score: 0.283
+[20:04:20.703] 
+Epoch: 77 | Kidney Dice score: 0.832 | Tumor Dice score: 0.180
+[20:10:21.078] 
+Epoch: 78 | Kidney Dice score: 0.821 | Tumor Dice score: 0.285
+[20:16:01.679] 
+Epoch: 79 | Kidney Dice score: 0.812 | Tumor Dice score: 0.252
+[20:19:31.208] NaN or Inf found in input tensor.
+[20:22:04.168] 
+Epoch: 80 | Kidney Dice score: 0.825 | Tumor Dice score: 0.329
+[20:27:48.555] 
+Epoch: 81 | Kidney Dice score: 0.832 | Tumor Dice score: 0.272
+[20:33:55.175] 
+Epoch: 82 | Kidney Dice score: 0.827 | Tumor Dice score: 0.261
+[20:39:38.824] 
+Epoch: 83 | Kidney Dice score: 0.819 | Tumor Dice score: 0.246
+[20:42:28.369] NaN or Inf found in input tensor.
+[20:45:30.373] 
+Epoch: 84 | Kidney Dice score: 0.836 | Tumor Dice score: 0.262
+[20:49:22.352] NaN or Inf found in input tensor.
+[20:51:17.472] 
+Epoch: 85 | Kidney Dice score: 0.824 | Tumor Dice score: 0.298
+[20:52:35.652] NaN or Inf found in input tensor.
+[20:52:39.620] NaN or Inf found in input tensor.
+[20:57:07.178] 
+Epoch: 86 | Kidney Dice score: 0.804 | Tumor Dice score: 0.297
+[21:02:54.959] 
+Epoch: 87 | Kidney Dice score: 0.803 | Tumor Dice score: 0.245
+[21:08:52.175] 
+Epoch: 88 | Kidney Dice score: 0.810 | Tumor Dice score: 0.307
+[21:14:46.667] 
+Epoch: 89 | Kidney Dice score: 0.825 | Tumor Dice score: 0.309
+[21:20:34.459] 
+Epoch: 90 | Kidney Dice score: 0.828 | Tumor Dice score: 0.294
+[21:26:33.657] 
+Epoch: 91 | Kidney Dice score: 0.830 | Tumor Dice score: 0.300
+[21:29:58.451] NaN or Inf found in input tensor.
+[21:32:31.355] 
+Epoch: 92 | Kidney Dice score: 0.837 | Tumor Dice score: 0.333
+[21:38:30.580] 
+Epoch: 93 | Kidney Dice score: 0.821 | Tumor Dice score: 0.244
+[21:44:20.800] 
+Epoch: 94 | Kidney Dice score: 0.827 | Tumor Dice score: 0.275
+[21:44:47.151] NaN or Inf found in input tensor.
+[21:50:20.668] 
+Epoch: 95 | Kidney Dice score: 0.825 | Tumor Dice score: 0.284
+[21:56:12.060] 
+Epoch: 96 | Kidney Dice score: 0.810 | Tumor Dice score: 0.359
