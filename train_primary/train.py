@@ -36,7 +36,7 @@ def worker_init_fn(worker_id):
 
 def main():
     reproduce(args.seed)
-    logging.basicConfig(filename=os.path.join(args.exp_name, 'log.txt'), level=logging.INFO,
+    logging.basicConfig(filename=os.path.join(args.exp_name, 'breast_seg.txt'), level=logging.INFO,
                         format='[%(asctime)s.%(msecs)03d] %(message)s', datefmt='%H:%M:%S')
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
     logging.info(str(args))
