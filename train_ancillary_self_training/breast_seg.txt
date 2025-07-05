@@ -431,3 +431,51 @@ Epoch: 107 | Kidney Dice score: 0.851 | Tumor Dice score: 0.218
 Epoch: 108 | Loss/L_supervised: 0.019757 | Loss/L_proj: -0.085 | Loss/L_crf: 0.066
 [09:59:50.561] 
 Epoch: 108 | Kidney Dice score: 0.851 | Tumor Dice score: 0.215
+[10:09:19.370] 
+Epoch: 109 | Loss/L_supervised: 0.021063 | Loss/L_proj: -0.085 | Loss/L_crf: 0.069
+[10:10:14.174] 
+Epoch: 109 | Kidney Dice score: 0.858 | Tumor Dice score: 0.209
+[10:19:48.078] 
+Epoch: 110 | Loss/L_supervised: 0.030487 | Loss/L_proj: -0.085 | Loss/L_crf: 0.069
+[10:20:40.983] 
+Epoch: 110 | Kidney Dice score: 0.846 | Tumor Dice score: 0.217
+[10:30:07.864] 
+Epoch: 111 | Loss/L_supervised: 0.029095 | Loss/L_proj: -0.085 | Loss/L_crf: 0.075
+[10:30:56.361] 
+Epoch: 111 | Kidney Dice score: 0.861 | Tumor Dice score: 0.187
+[10:40:28.871] 
+Epoch: 112 | Loss/L_supervised: 0.025881 | Loss/L_proj: -0.085 | Loss/L_crf: 0.071
+[10:41:17.170] 
+Epoch: 112 | Kidney Dice score: 0.844 | Tumor Dice score: 0.226
+[10:50:55.958] 
+Epoch: 113 | Loss/L_supervised: 0.022769 | Loss/L_proj: -0.085 | Loss/L_crf: 0.069
+[10:51:50.879] 
+Epoch: 113 | Kidney Dice score: 0.853 | Tumor Dice score: 0.236
+[11:01:27.670] 
+Epoch: 114 | Loss/L_supervised: 0.019286 | Loss/L_proj: -0.085 | Loss/L_crf: 0.067
+[11:02:21.179] 
+Epoch: 114 | Kidney Dice score: 0.854 | Tumor Dice score: 0.268
+[11:11:53.189] 
+Epoch: 115 | Loss/L_supervised: 0.018972 | Loss/L_proj: -0.085 | Loss/L_crf: 0.070
+[11:12:46.778] 
+Epoch: 115 | Kidney Dice score: 0.849 | Tumor Dice score: 0.240
+[11:22:21.181] 
+Epoch: 116 | Loss/L_supervised: 0.017905 | Loss/L_proj: -0.085 | Loss/L_crf: 0.067
+[11:23:14.355] 
+Epoch: 116 | Kidney Dice score: 0.851 | Tumor Dice score: 0.263
+[11:32:49.594] 
+Epoch: 117 | Loss/L_supervised: 0.020335 | Loss/L_proj: -0.085 | Loss/L_crf: 0.067
+[11:33:36.364] 
+Epoch: 117 | Kidney Dice score: 0.854 | Tumor Dice score: 0.259
+[11:43:11.657] 
+Epoch: 118 | Loss/L_supervised: 0.016997 | Loss/L_proj: -0.085 | Loss/L_crf: 0.067
+[11:44:08.770] 
+Epoch: 118 | Kidney Dice score: 0.858 | Tumor Dice score: 0.165
+[11:53:28.973] 
+Epoch: 119 | Loss/L_supervised: 0.021254 | Loss/L_proj: -0.085 | Loss/L_crf: 0.067
+[11:54:18.866] 
+Epoch: 119 | Kidney Dice score: 0.856 | Tumor Dice score: 0.150
+[12:04:05.490] 
+Epoch: 120 | Loss/L_supervised: 0.016343 | Loss/L_proj: -0.085 | Loss/L_crf: 0.066
+[12:04:56.170] 
+Epoch: 120 | Kidney Dice score: 0.861 | Tumor Dice score: 0.320
