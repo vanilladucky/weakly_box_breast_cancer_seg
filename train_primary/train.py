@@ -248,7 +248,7 @@ if __name__ == '__main__':
     parser.add_argument('--max_epoch', type=int, default=200)
     parser.add_argument('--batch_size', type=int, default=2)
     parser.add_argument('--num_workers', type=int, default=4)
-    parser.add_argument('--patch_size', type=list, default=[128, 96, 96])
+    parser.add_argument('--patch_size', type=list, default=[96, 128, 128])
     parser.add_argument('--base_lr', type=float, default=5e-4)
     parser.add_argument('--gpu', type=str, default='0')
     parser.add_argument('--T', type=float, default=1)
