@@ -1360,3 +1360,16 @@ Epoch: 421 | Kidney Dice score: 0.843 | Tumor Dice score: 0.380
 Epoch: 422 | Kidney Dice score: 0.847 | Tumor Dice score: 0.380
 [13:17:03.365] 
 Epoch: 423 | Kidney Dice score: 0.849 | Tumor Dice score: 0.379
+[13:20:15.000] 
+Epoch: 424 | Kidney Dice score: 0.850 | Tumor Dice score: 0.380
+[13:23:41.277] 
+Epoch: 425 | Kidney Dice score: 0.849 | Tumor Dice score: 0.381
+[13:26:53.488] 
+Epoch: 426 | Kidney Dice score: 0.851 | Tumor Dice score: 0.384
+[13:27:17.729] NaN or Inf found in input tensor.
+[13:30:11.294] 
+Epoch: 427 | Kidney Dice score: 0.855 | Tumor Dice score: 0.367
+[13:33:42.282] 
+Epoch: 428 | Kidney Dice score: 0.853 | Tumor Dice score: 0.372
+[13:37:00.535] 
+Epoch: 429 | Kidney Dice score: 0.849 | Tumor Dice score: 0.380
